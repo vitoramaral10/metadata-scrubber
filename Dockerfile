@@ -14,7 +14,7 @@ COPY src ./src
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv venv /srv/metadata-scrubber/.venv \
- && uv pip install --python /srv/metadata-scrubber/.venv --no-editable .
+ && uv pip install --python /srv/metadata-scrubber/.venv .
 
 # Base fixada por digest: tag e movel, e build reproduzivel importa no dia do
 # post-mortem. O digest fica literal no FROM -- via ARG, o hadolint nao resolve
