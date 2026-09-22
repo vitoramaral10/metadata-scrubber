@@ -31,6 +31,12 @@ ENV PATH="/srv/metadata-scrubber/.venv/bin:$PATH" \
     HOME=/tmp \
     MPLCONFIGDIR=/tmp
 
+# A aplicacao roda num venv autocontido, entao pip e setuptools do sistema nao
+# sao usados em runtime -- so acrescentam superficie de ataque e CVE. Isto nao
+# encolhe a imagem (a camada da base continua no historico), mas remove os
+# binarios do filesystem final, que e o que um processo comprometido alcanca.
+RUN find /usr/local/lib/python3.13/site-packages -maxdepth 1       \( -name 'pip' -o -name 'pip-*' -o -name 'setuptools' -o -name 'setuptools-*'          -o -name 'pkg_resources' -o -name 'wheel' -o -name 'wheel-*' \)       -exec rm -rf {} +  && rm -f /usr/local/bin/pip /usr/local/bin/pip3 /usr/local/bin/pip3.13  && find / -xdev -perm /6000 -type f -exec chmod a-s {} + 2>/dev/null || true
+
 # Arquivos da aplicacao pertencem a root e sao somente leitura para o processo:
 # bug de escrita de arquivo nao vira execucao de codigo persistente.
 COPY --from=builder --chown=root:root --chmod=755 /srv/metadata-scrubber/.venv /srv/metadata-scrubber/.venv

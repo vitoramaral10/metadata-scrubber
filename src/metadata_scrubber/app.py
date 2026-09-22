@@ -91,7 +91,7 @@ def process(paths: list[str] | None, keep_icc: bool) -> tuple[list[str], list[li
 
 
 def build() -> gr.Blocks:
-    with gr.Blocks(title="metadata-scrubber", theme=gr.themes.Soft()) as demo:
+    with gr.Blocks(title="metadata-scrubber", analytics_enabled=False) as demo:
         gr.Markdown("# metadata-scrubber")
         gr.Markdown(DESCRIPTION)
 
@@ -142,9 +142,9 @@ def main() -> None:
         server_name=os.getenv("GRADIO_SERVER_NAME", "0.0.0.0"),
         server_port=int(os.getenv("GRADIO_SERVER_PORT", "7860")),
         max_file_size=MAX_FILE_SIZE,
-        show_api=False,
+        theme=gr.themes.Soft(),
+        # SSR exigiria Node no container; a UI e leve e nao precisa.
         ssr_mode=False,
-        analytics_enabled=False,
         quiet=False,
     )
 
