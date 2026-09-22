@@ -1,9 +1,5 @@
 # syntax=docker/dockerfile:1
 
-# Base fixada por digest: tag e movel, e build reproduzivel importa no dia do
-# post-mortem. Renovate/Dependabot atualizam o digest.
-ARG PYTHON_IMAGE=python:3.13-slim@sha256:8d9d0b8bcf6506481eae4907c18f5e3e7902e629f5f6d684f9e7c32e85e3ddf0
-
 FROM ghcr.io/astral-sh/uv:0.9-python3.13-bookworm-slim AS builder
 
 ENV UV_COMPILE_BYTECODE=1 \
@@ -20,7 +16,10 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv venv /srv/metadata-scrubber/.venv \
  && uv pip install --python /srv/metadata-scrubber/.venv --no-editable .
 
-FROM ${PYTHON_IMAGE} AS runtime
+# Base fixada por digest: tag e movel, e build reproduzivel importa no dia do
+# post-mortem. O digest fica literal no FROM -- via ARG, o hadolint nao resolve
+# a referencia e acusa DL3006. Renovate/Dependabot atualizam esta linha.
+FROM python:3.13-slim@sha256:8d9d0b8bcf6506481eae4907c18f5e3e7902e629f5f6d684f9e7c32e85e3ddf0 AS runtime
 
 ENV PATH="/srv/metadata-scrubber/.venv/bin:$PATH" \
     PYTHONDONTWRITEBYTECODE=1 \
