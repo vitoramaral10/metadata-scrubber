@@ -1,0 +1,32 @@
+[project]
+name = "metadata-scrubber"
+version = "0.1.0"
+description = "Remove metadados de imagem (EXIF, XMP, IPTC, C2PA) sem recodificar o pixel"
+readme = "README.md"
+requires-python = ">=3.13"
+license = { text = "MIT" }
+dependencies = ["gradio>=5.49,<6"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3", "pillow>=11.0", "ruff>=0.9"]
+
+[project.scripts]
+metadata-scrubber-web = "metadata_scrubber.app:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/metadata_scrubber"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]

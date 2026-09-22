@@ -1,0 +1,26 @@
+# Exemplo autocontido. No homelab, o servico entra no compose que ja compartilha
+# a rede do cloudflared -- veja o bloco no README.
+services:
+  metadata-scrubber:
+    image: ghcr.io/vitoramaral10/metadata-scrubber:latest
+    container_name: metadata-scrubber
+    restart: unless-stopped
+
+    # Endurecimento de runtime: o Dockerfile nao consegue exigir nada disto.
+    user: "65532:65532"
+    read_only: true
+    tmpfs:
+      - /tmp:size=256m,mode=1777
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    pids_limit: 200
+    mem_limit: 1g
+    cpus: 1.5
+
+    environment:
+      SCRUBBER_MAX_FILES: "20"
+      SCRUBBER_MAX_FILE_SIZE: "25mb"
+
+    # Sem "ports": quem publica o servico e o Cloudflare Tunnel, pela rede interna.
+    expose:
+      - "7860"
